@@ -9,7 +9,15 @@ opkg update
 opkg install python3-light python3-requests python3-aiohttp curl ca-bundle coreutils-base64
 
 mkdir -p "$APP_DIR" /var/log/cfnb
-cp "$SRC_DIR/main.py" "$SRC_DIR/config.json" "$APP_DIR/"
+cp "$SRC_DIR/main.py" "$APP_DIR/"
+if [ -f "$SRC_DIR/config.json" ]; then
+    cp "$SRC_DIR/config.json" "$APP_DIR/"
+elif [ -f "$SRC_DIR/openwrt/config.example.json" ]; then
+    cp "$SRC_DIR/openwrt/config.example.json" "$APP_DIR/config.json"
+else
+    echo "missing config.json or openwrt/config.example.json" >&2
+    exit 1
+fi
 [ -f "$SRC_DIR/github_sync.py" ] && cp "$SRC_DIR/github_sync.py" "$APP_DIR/"
 [ -f "$SRC_DIR/git_sync.sh" ] && cp "$SRC_DIR/git_sync.sh" "$APP_DIR/"
 chmod 700 "$APP_DIR" "$APP_DIR"/*.sh 2>/dev/null || true
