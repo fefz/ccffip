@@ -1,0 +1,22 @@
+#!/bin/sh /etc/rc.common
+
+START=95
+STOP=10
+USE_PROCD=1
+
+APP_DIR="/opt/cfnb"
+
+start_service() {
+    [ -x /usr/bin/python3 ] || return 1
+    [ -f "$APP_DIR/main.py" ] || return 1
+
+    procd_open_instance
+    procd_set_param command /usr/bin/python3 "$APP_DIR/main.py"
+    procd_set_param env PYTHONUNBUFFERED=1
+    procd_set_param directory "$APP_DIR"
+    procd_set_param stdout 1
+    procd_set_param stderr 1
+    # The normal schedule is cron. respawn only protects a manual service run.
+    procd_set_param respawn 3600 5 3
+    procd_close_instance
+}
