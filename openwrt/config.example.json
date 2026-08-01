@@ -54,7 +54,7 @@
   "CF_ENABLED": false,
   "CF_API_TOKEN": "",
   "CF_ZONE_ID": "",
-  "CF_DNS_RECORD_NAME": false,
+  "CF_DNS_RECORD_NAME": "",
   "CF_TTL": 60,
   "CF_PROXIED": false,
   "CF_DNS_CONNECT_TIMEOUT": 3,
