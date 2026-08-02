@@ -7,7 +7,7 @@ SRC_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 
 if command -v apk >/dev/null 2>&1; then
     apk update || echo "warning: some apk feeds failed; continuing with available indexes"
-    apk add python3 python3-requests curl ca-bundle coreutils-base64
+    apk add python3 curl ca-bundle coreutils-base64
 elif command -v opkg >/dev/null 2>&1; then
     opkg update
     opkg install python3-light python3-requests curl ca-bundle coreutils-base64
@@ -18,6 +18,11 @@ fi
 
 mkdir -p "$APP_DIR" /var/log/cfnb
 cp "$SRC_DIR/main.py" "$APP_DIR/"
+if [ -f "$SRC_DIR/openwrt/python-vendor.tar.gz" ]; then
+    rm -rf "$APP_DIR/vendor"
+    mkdir -p "$APP_DIR/vendor"
+    tar -xzf "$SRC_DIR/openwrt/python-vendor.tar.gz" -C "$APP_DIR/vendor"
+fi
 if [ -f "$SRC_DIR/config.json" ]; then
     cp "$SRC_DIR/config.json" "$APP_DIR/"
 elif [ -f "$SRC_DIR/openwrt/config.example.json" ]; then
