@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Cloudflare IP 优选工具 (TCP筛选 + IP可用性二次筛选 + HTTP检测 + curl带宽测速 + WxPusher通知)
-依赖：requests, curl, aiohttp
+依赖：requests, curl；aiohttp 仅在启用 IP 地区校准时需要
 配置文件：同目录下的 config.json
 结果保存到 ip.txt，并自动推送到 GitHub，同时批量更新到 Cloudflare DNS
 支持 Windows / Linux
@@ -22,7 +22,10 @@ import subprocess
 import shutil
 import json
 import asyncio
-import aiohttp
+try:
+    import aiohttp
+except ImportError:
+    aiohttp = None
 import ipaddress
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -911,6 +914,10 @@ async def query_new_ips(new_ips, token_list, concurrency, min_interval, trust_en
     return result, exhausted_flag
 
 def calibrate_regions(nodes, token_file, cache_file):
+    if IP_CALIBRATION_ENABLED and aiohttp is None:
+        print("IP 地区校准已启用，但未安装 aiohttp；跳过地区校准。")
+        return
+
     if not IP_CALIBRATION_ENABLED:
         print("IP 地区校准已禁用，跳过。")
         return
