@@ -5,8 +5,16 @@ set -e
 APP_DIR="${APP_DIR:-/opt/cfnb}"
 SRC_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 
-opkg update
-opkg install python3-light python3-requests python3-aiohttp curl ca-bundle coreutils-base64
+if command -v apk >/dev/null 2>&1; then
+    apk update
+    apk add python3 python3-requests python3-aiohttp curl ca-bundle coreutils-base64
+elif command -v opkg >/dev/null 2>&1; then
+    opkg update
+    opkg install python3-light python3-requests python3-aiohttp curl ca-bundle coreutils-base64
+else
+    echo "no apk or opkg package manager found" >&2
+    exit 1
+fi
 
 mkdir -p "$APP_DIR" /var/log/cfnb
 cp "$SRC_DIR/main.py" "$APP_DIR/"
