@@ -36,7 +36,9 @@ fi
 chmod 700 "$APP_DIR" "$APP_DIR"/*.sh 2>/dev/null || true
 chmod 600 "$APP_DIR/config.json"
 
-install -m 0755 "$SRC_DIR/openwrt/cfnb.init" /etc/init.d/cfnb
+mkdir -p /etc/init.d
+cp "$SRC_DIR/openwrt/cfnb.init" /etc/init.d/cfnb
+chmod 0755 /etc/init.d/cfnb
 
 CRON_LINE="*/5 * * * * cd $APP_DIR && /usr/bin/python3 $APP_DIR/main.py >> /var/log/cfnb/cron.log 2>&1"
 CRON_FILE=/etc/crontabs/root
