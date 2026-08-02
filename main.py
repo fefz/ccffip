@@ -641,7 +641,9 @@ def _parse_text_nodes(text):
         if not re.match(r'^\d+\.\d+\.\d+\.\d+:\d+$', ipport):
             continue
 
-        code = extract_country_code(label)
+        # 数据源常见的标准格式：IP:PORT#XX，直接接受两位国家代码。
+        direct_code = label.upper() if re.fullmatch(r"[A-Za-z]{2}", label) else None
+        code = direct_code or extract_country_code(label)
         if code:
             nodes.append(f"{ipport}#{code}")
         else:
