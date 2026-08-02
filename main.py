@@ -12,10 +12,20 @@ Cloudflare IP 优选工具 (TCP筛选 + IP可用性二次筛选 + HTTP检测 + c
 修复：节点标签只保留国家代码；token耗尽通知只在真正耗尽时发送
 """
 
+import sys as _sys
+import os as _os
+_VENDOR_DIR = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "vendor")
+if _os.path.isdir(_VENDOR_DIR) and _VENDOR_DIR not in _sys.path:
+    _sys.path.insert(0, _VENDOR_DIR)
+
 import requests
 import socket
 import time
 import sys
+import os
+VENDOR_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor")
+if os.path.isdir(VENDOR_DIR) and VENDOR_DIR not in sys.path:
+    sys.path.insert(0, VENDOR_DIR)
 import re
 import os
 import subprocess
