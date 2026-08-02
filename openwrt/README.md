@@ -20,8 +20,9 @@ sh openwrt/install.sh
 
 安装脚本会：
 
-1. 使用 `opkg` 安装运行依赖；
-2. 安装到 `/opt/cfnb`；
+1. 自动检测 `apk`（ImmortalWrt 25.12+）或 `opkg`（旧版 OpenWrt）；
+2. 使用对应包管理器安装运行依赖；
+3. 安装到 `/opt/cfnb`；
 3. 安装 `/etc/init.d/cfnb`；
 4. 写入每 5 分钟执行的 OpenWrt cron；
 5. 创建 `/var/log/cfnb/cron.log`。
