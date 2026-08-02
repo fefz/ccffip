@@ -6,7 +6,7 @@ APP_DIR="${APP_DIR:-/opt/cfnb}"
 SRC_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 
 if command -v apk >/dev/null 2>&1; then
-    apk update
+    apk update || echo "warning: some apk feeds failed; continuing with available indexes"
     apk add python3 python3-requests python3-aiohttp curl ca-bundle coreutils-base64
 elif command -v opkg >/dev/null 2>&1; then
     opkg update
