@@ -14,3 +14,5 @@
 45.89.232.128:443#Mine-NRT-14-xtom 21.68 Mbps
 45.89.232.170:8080#Mine-NRT-15-xtom 8.81 Mbps
 45.143.235.50:443#Mine-NRT-11-xtom 23.13 Mbps
+45.143.235.138:2053#Mine-NRT-11-xtom 4.25 Mbps
+45.153.246.5:443#Mine-NRT-12-xtom 3.71 Mbps
