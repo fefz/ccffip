@@ -22,6 +22,8 @@ def endpoint_from_line(line):
 
 def check(line, sni_host, colo, connect_timeout, max_time):
     endpoint = endpoint_from_line(line)
+    if colo.upper() in {"ANY", "ALL", "OFF", "NONE"}:
+        return endpoint
     try:
         ip, port = endpoint.rsplit(":", 1)
         cmd = [
@@ -44,7 +46,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("input")
     p.add_argument("output")
-    p.add_argument("--colo", default="NRT")
+    p.add_argument("--colo", default="NRT", help="Colo to keep; ANY/ALL/OFF disables colo filtering")
     p.add_argument("--sni-host", default="speed.cloudflare.com")
     p.add_argument("--workers", type=int, default=256)
     p.add_argument("--connect-timeout", type=int, default=1)

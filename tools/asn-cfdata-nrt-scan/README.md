@@ -4,13 +4,15 @@
 
 1. 生成 CIDR 内全部 IPv4 地址。
 2. Masscan 全量 TCP `1-65535`，只记录 TCP 开放端口。
-3. 直接对 masscan 开放端口做 HTTPS `/cdn-cgi/trace` 校验，只保留 `colo=NRT` 的端点。
-4. 用 `github_append.py` 从 GitHub Contents API 读取现有文件，去重后每 20 条追加，任务结束时补传不足 20 条的余数。
+3. 使用 CFData 的 TCP 连接测试筛选开放端口。
+4. 可选地对 TCP 通过端点做 HTTPS `/cdn-cgi/trace` 校验，默认只保留 `colo=NRT`，也可动态传入其他 Colo 或 `ANY` 跳过 Colo 限制。
+5. 用 `github_append.py` 从 GitHub Contents API 读取现有文件，去重后每 20 条追加，任务结束时补传不足 20 条的余数。
 
 ## 文件
 
-- `scan_pipeline.sh`：隔离目录、全端口扫描和 NRT 筛选的串行入口。
-- `nrt_filter.py`：直接解析 masscan 输出，使用 `speed.cloudflare.com` SNI 检查真实 `colo=NRT`。
+- `scan_pipeline.sh`：隔离目录、全端口扫描、CF TCP 和 Colo 筛选的串行入口。
+- `tcp_filter.py`：复用现有 CFData TCP 逻辑筛选 masscan 结果。
+- `nrt_filter.py`：使用 `speed.cloudflare.com` SNI 检查指定 Colo。
 - `github_append.py`：安全读取 SHA、批量追加并回读所需的发布工具。
 
 ## 运行示例
@@ -22,6 +24,7 @@ cd /path/to/asn-cfdata-nrt-scan
 export WORKDIR=/tmp/cfscan-gm
 export CIDRS='14.137.229.0/24 103.112.1.0/24'
 export MASSCAN_RATE=10000
+export COLO=NRT
 nohup ./scan_pipeline.sh > "$WORKDIR.console.log" 2>&1 &
 ```
 
@@ -45,11 +48,12 @@ python3 github_append.py /tmp/cfscan-gm/nrt-validated.txt \
 ```text
 targets.txt                 输入地址
 masscan.list                TCP 开放端口
-nrt-validated.txt           HTTPS trace 明确报告 colo=NRT
-run.log                     MASSCAN_FINISHED / NRT_FINISHED
+tcp-validated.txt           CFData TCP 通过
+colo-validated.txt          HTTPS trace 明确报告目标 Colo
+run.log                     MASSCAN_FINISHED / CF_TCP_FINISHED / NRT_FINISHED
 ```
 
-TCP 开放和 NRT trace 成功不是速度测试，也不代表 VLESS、SS、WS 或其他代理协议可用。本流程不执行下载测速，不把这些结果标记为 Mbps。
+TCP 开放、CF TCP 通过和 Colo trace 成功都不是速度测试，也不代表 VLESS、SS、WS 或其他代理协议可用。本流程不执行下载测速，不把这些结果标记为 Mbps。
 
 ## 安全和发布约束
 
