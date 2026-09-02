@@ -4,11 +4,24 @@ import argparse
 import concurrent.futures
 import itertools
 import os
+import re
 import subprocess
 
 
+MASSCAN_LINE = re.compile(r"^open\s+tcp\s+(\d+)\s+(\d{1,3}(?:\.\d{1,3}){3})\s+")
+
+
+def endpoint_from_line(line):
+    line = line.strip()
+    match = MASSCAN_LINE.match(line)
+    if match:
+        port, ip = match.groups()
+        return f"{ip}:{port}"
+    return line.split("#", 1)[0]
+
+
 def check(line, sni_host, colo, connect_timeout, max_time):
-    endpoint = line.strip().split("#", 1)[0]
+    endpoint = endpoint_from_line(line)
     try:
         ip, port = endpoint.rsplit(":", 1)
         cmd = [

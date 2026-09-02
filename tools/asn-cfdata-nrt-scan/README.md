@@ -4,14 +4,13 @@
 
 1. 生成 CIDR 内全部 IPv4 地址。
 2. Masscan 全量 TCP `1-65535`，只记录 TCP 开放端口。
-3. 使用现有 `/opt/cfnb/xtom_cfdata_filter.py` 做 TCP/HTTP Cloudflare 筛选。
-4. 使用 HTTPS `/cdn-cgi/trace` 并保留 `colo=NRT` 的端点。
-5. 用 `github_append.py` 从 GitHub Contents API 读取现有文件，去重后每 20 条追加，任务结束时补传不足 20 条的余数。
+3. 直接对 masscan 开放端口做 HTTPS `/cdn-cgi/trace` 校验，只保留 `colo=NRT` 的端点。
+4. 用 `github_append.py` 从 GitHub Contents API 读取现有文件，去重后每 20 条追加，任务结束时补传不足 20 条的余数。
 
 ## 文件
 
-- `scan_pipeline.sh`：隔离目录、全端口扫描和两级筛选的串行入口。
-- `nrt_filter.py`：使用 `speed.cloudflare.com` SNI 检查真实 `colo=NRT`。
+- `scan_pipeline.sh`：隔离目录、全端口扫描和 NRT 筛选的串行入口。
+- `nrt_filter.py`：直接解析 masscan 输出，使用 `speed.cloudflare.com` SNI 检查真实 `colo=NRT`。
 - `github_append.py`：安全读取 SHA、批量追加并回读所需的发布工具。
 
 ## 运行示例
@@ -38,9 +37,7 @@ python3 github_append.py /tmp/cfscan-gm/nrt-validated.txt \
 ## 关键参数
 
 - `MASSCAN_RATE`：默认 `10000`。这是发包速率，不是线程并发。
-- `TCP_WORKERS` / `HTTP_WORKERS`：默认 `1000`，传给现有 CFData 筛选器。
 - `NRT_WORKERS`：默认 `256`，用于 HTTPS trace 校验。
-- `CF_FILTER`：现有 `/opt/cfnb/xtom_cfdata_filter.py` 路径。
 - `NRT_FILTER`：默认当前目录的 `nrt_filter.py`。
 
 ## 产物和判断边界
@@ -48,12 +45,11 @@ python3 github_append.py /tmp/cfscan-gm/nrt-validated.txt \
 ```text
 targets.txt                 输入地址
 masscan.list                TCP 开放端口
-cfdata-validated.txt        CFData/HTTP 通过
 nrt-validated.txt           HTTPS trace 明确报告 colo=NRT
-run.log                     MASSCAN_FINISHED / CF_FILTER_FINISHED / NRT_FINISHED
+run.log                     MASSCAN_FINISHED / NRT_FINISHED
 ```
 
-TCP 开放、HTTP 成功和 NRT trace 成功不是速度测试，也不代表 VLESS、SS、WS 或其他代理协议可用。本流程不执行下载测速，不把这些结果标记为 Mbps。
+TCP 开放和 NRT trace 成功不是速度测试，也不代表 VLESS、SS、WS 或其他代理协议可用。本流程不执行下载测速，不把这些结果标记为 Mbps。
 
 ## 安全和发布约束
 
