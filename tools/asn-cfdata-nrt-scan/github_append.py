@@ -1,60 +1,61 @@
 #!/usr/bin/env python3
-"""Append validated rows to GitHub in batches, then flush the remainder."""
-import argparse
-import base64
-import json
-import subprocess
-import time
+"""Concurrency-safe append-only GitHub Contents publisher."""
+import argparse, base64, json, os, subprocess, time
 
 
 def unique_rows(path):
-    return list(dict.fromkeys(x.strip() for x in open(path, errors="replace") if x.strip()))
+    rows = []
+    seen = set()
+    for raw in open(path, errors="replace"):
+        row = raw.strip()
+        if row and row not in seen:
+            seen.add(row); rows.append(row)
+    return rows
 
 
 def get_blob(repo, path):
-    r = subprocess.run(["gh", "api", f"repos/{repo}/contents/{path}"], text=True, capture_output=True, check=True)
-    obj = json.loads(r.stdout)
-    return obj, base64.b64decode(obj["content"]).decode().splitlines()
+    r = subprocess.run(["gh", "api", f"repos/{repo}/contents/{path}"], text=True, capture_output=True)
+    if r.returncode != 0 and "404" in (r.stderr + r.stdout): return None, []
+    r.check_returncode(); obj = json.loads(r.stdout)
+    return obj, base64.b64decode(obj["content"].replace("\n", "")).decode().splitlines()
 
 
 def put_blob(repo, path, old, rows, message):
     payload = {"message": message, "content": base64.b64encode(("\n".join(rows) + "\n").encode()).decode()}
-    if old:
-        payload["sha"] = old["sha"]
-    r = subprocess.run(["gh", "api", "--method", "PUT", f"repos/{repo}/contents/{path}", "--input", "-"], input=json.dumps(payload), text=True, capture_output=True, check=True)
-    return json.loads(r.stdout)
+    if old: payload["sha"] = old["sha"]
+    r = subprocess.run(["gh", "api", "--method", "PUT", f"repos/{repo}/contents/{path}", "--input", "-"], input=json.dumps(payload), text=True, capture_output=True)
+    r.check_returncode(); return json.loads(r.stdout)
+
+
+def publish_once(repo, path, source, batch_size, final=False):
+    for attempt in range(3):
+        old, remote = get_blob(repo, path)
+        remote_set = set(remote)
+        new = [row for row in unique_rows(source) if row not in remote_set]
+        count = len(new) if final else (len(new) // batch_size) * batch_size
+        if not count: return 0
+        desired = remote + new[:count]
+        try:
+            put_blob(repo, path, old, desired, "Complete validated CF endpoints" if final else "Append validated CF endpoints")
+            check_old, check_rows = get_blob(repo, path)
+            if check_rows != desired or len(check_rows) != len(set(check_rows)):
+                raise RuntimeError("GitHub read-back validation failed")
+            return count
+        except subprocess.CalledProcessError:
+            if attempt == 2: raise
+            time.sleep(1)
+    return 0
 
 
 def main():
-    p = argparse.ArgumentParser()
-    p.add_argument("source")
-    p.add_argument("--repo", required=True)
-    p.add_argument("--path", required=True)
-    p.add_argument("--batch-size", type=int, default=20)
-    p.add_argument("--poll-seconds", type=int, default=60)
-    p.add_argument("--done-marker", help="Only finish after this marker file exists")
+    p = argparse.ArgumentParser(); p.add_argument("source"); p.add_argument("--repo", required=True); p.add_argument("--path", required=True); p.add_argument("--batch-size", type=int, default=20); p.add_argument("--poll-seconds", type=int, default=60); p.add_argument("--done-marker")
     args = p.parse_args()
     while True:
         try:
-            old, remote = get_blob(args.repo, args.path)
-            new = [x for x in unique_rows(args.source) if x not in remote]
-            count = (len(new) // args.batch_size) * args.batch_size
-            if count:
-                put_blob(args.repo, args.path, old, remote + new[:count], "Append validated CF NRT endpoints")
-                print(f"uploaded={count} total={len(remote)+count}", flush=True)
-            if args.done_marker and not __import__('os').path.exists(args.done_marker):
-                time.sleep(args.poll_seconds)
-                continue
-            old, remote = get_blob(args.repo, args.path)
-            new = [x for x in unique_rows(args.source) if x not in remote]
-            if new:
-                result = put_blob(args.repo, args.path, old, remote + new, "Complete validated CF NRT endpoints")
-                print(f"final_flush={len(new)} total={len(remote)+len(new)} commit={result['commit']['sha']}", flush=True)
-            break
+            publish_once(args.repo, args.path, args.source, args.batch_size, final=False)
+            if args.done_marker and not os.path.exists(args.done_marker): time.sleep(args.poll_seconds); continue
+            publish_once(args.repo, args.path, args.source, args.batch_size, final=True); break
         except Exception as exc:
-            print(f"ERROR {exc}", flush=True)
-            time.sleep(args.poll_seconds)
+            print(f"ERROR {exc}", flush=True); time.sleep(args.poll_seconds)
 
-
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__": main()

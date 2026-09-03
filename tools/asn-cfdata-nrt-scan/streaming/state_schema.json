@@ -1,0 +1,11 @@
+{
+  "required": ["input_byte_cursor", "batch_number", "masscan_open", "tcp_checked", "tcp_pass", "colo_checked", "colo_pass", "uploaded", "producer_pid", "producer_exit_code", "colo", "repo", "path"],
+  "properties": {
+    "input_byte_cursor": {"type": "integer", "minimum": 0},
+    "batch_number": {"type": "integer", "minimum": 0},
+    "masscan_open": {"type": "integer", "minimum": 0},
+    "tcp_checked": {"type": "integer", "minimum": 0}, "tcp_pass": {"type": "integer", "minimum": 0},
+    "colo_checked": {"type": "integer", "minimum": 0}, "colo_pass": {"type": "integer", "minimum": 0}, "uploaded": {"type": "integer", "minimum": 0},
+    "producer_pid": {}, "producer_exit_code": {}, "colo": {"type": "string"}, "repo": {"type": "string"}, "path": {"type": "string"}
+  }
+}
