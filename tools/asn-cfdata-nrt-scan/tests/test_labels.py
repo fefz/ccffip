@@ -25,4 +25,4 @@ def test_tcp_check_uses_bare_endpoint(monkeypatch):
     seen = []
     monkeypatch.setattr(tcp.cf, 'test_node', lambda value: (seen.append(value) or ['192.0.2.1:443']))
     assert tcp.check('open tcp 443 192.0.2.1 1') == '192.0.2.1:443'
-    assert seen == ['192.0.2.1:443']
+    assert seen == ['192.0.2.1:443#JP']

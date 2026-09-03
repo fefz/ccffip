@@ -23,7 +23,7 @@ def endpoint_from_line(line):
 def check(line):
     endpoint = endpoint_from_line(line)
     if not endpoint: return None
-    result = cf.test_node(endpoint)
+    result = cf.test_node(endpoint + "#JP")
     if not result: return None
     accepted = result[0].split("#", 1)[0].strip()
     return accepted if endpoint_from_line(accepted) == accepted else None
