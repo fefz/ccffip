@@ -13,6 +13,11 @@ def unique_rows(path):
     return rows
 
 
+def endpoint_key(row):
+    """Deduplicate an endpoint regardless of its semantic label."""
+    return row.split("#", 1)[0].strip()
+
+
 def get_blob(repo, path):
     r = subprocess.run(["gh", "api", f"repos/{repo}/contents/{path}"], text=True, capture_output=True)
     if r.returncode != 0 and "404" in (r.stderr + r.stdout): return None, []
@@ -30,15 +35,21 @@ def put_blob(repo, path, old, rows, message):
 def publish_once(repo, path, source, batch_size, final=False):
     for attempt in range(3):
         old, remote = get_blob(repo, path)
-        remote_set = set(remote)
-        new = [row for row in unique_rows(source) if row not in remote_set]
+        remote_set = {endpoint_key(row) for row in remote}
+        new = []
+        for row in unique_rows(source):
+            key = endpoint_key(row)
+            if key not in remote_set:
+                remote_set.add(key)
+                new.append(row)
         count = len(new) if final else (len(new) // batch_size) * batch_size
         if not count: return 0
         desired = remote + new[:count]
         try:
             put_blob(repo, path, old, desired, "Complete validated CF endpoints" if final else "Append validated CF endpoints")
             check_old, check_rows = get_blob(repo, path)
-            if check_rows != desired or len(check_rows) != len(set(check_rows)):
+            if (check_rows != desired or
+                    len(check_rows) != len({endpoint_key(row) for row in check_rows})):
                 raise RuntimeError("GitHub read-back validation failed")
             return count
         except subprocess.CalledProcessError:
