@@ -1,0 +1,6 @@
+https://raw.githubusercontent.com/fefz/ccffip/main/ali_NRT.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/dm_sb.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/gm_jp.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/nb_jp.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/sky-jp.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/xtom_jp.txt
