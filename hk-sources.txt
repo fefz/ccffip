@@ -9,3 +9,5 @@ https://raw.githubusercontent.com/fefz/ccffip/main/net-hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/gm-hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/dm_hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/ak-hk.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/jti_hk.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/vh_hk.txt
