@@ -4,3 +4,4 @@ https://raw.githubusercontent.com/fefz/ccffip/main/gm_jp.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/nb_jp.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/sky-jp.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/xtom_jp.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/net_jp.txt
