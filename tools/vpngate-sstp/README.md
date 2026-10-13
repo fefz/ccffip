@@ -61,7 +61,7 @@ sudo -H python3 /opt/vpngate-sstp/run.py
 
 执行前确保 `net.ipv4.ip_forward=1`、`/dev/ppp` 可用，以及主机已有正常 IPv4 默认路由。脚本不会自动修改 IP 转发开关。
 
-## 每两小时运行
+## 每四小时运行
 
 ```bash
 sudo install -m 644 /opt/vpngate-sstp/vpngate-sstp-refresh.service /etc/systemd/system/
@@ -76,7 +76,7 @@ sudo journalctl -u vpngate-sstp-refresh.service -n 30 --no-pager
 sudo systemctl list-timers vpngate-sstp-refresh.timer
 ```
 
-定时器在**服务器时区**每逢偶数小时运行，例如 00:00、02:00、04:00；`Persistent=true` 支持开机补跑。部署主机当前采用北京时间。单次任务默认超时 15 分钟；网络极差时可通过 systemd override 调整，不能把超时当作成功。文件锁避免重复执行。
+定时器在**服务器时区**每四小时运行，时间为 00:00、04:00、08:00、12:00、16:00、20:00；`Persistent=true` 支持开机补跑。部署主机当前采用北京时间。单次任务默认超时 15 分钟；网络极差时可通过 systemd override 调整，不能把超时当作成功。文件锁避免重复执行。
 
 ## GitHub 发布与检查
 
