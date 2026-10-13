@@ -21,16 +21,9 @@ def parse_rows(html):
 def quality(n):
     return math.log2(1+n['mbps'])/((1+n['sessions'])**0.35*(1+n['ping_ms']/100))
 
-def parse_ip2location(html,ip):
-    fields={}
-    for row in BeautifulSoup(html,'html.parser').select('tr'):
-        cells=row.find_all(['td','th'])
-        if len(cells)==2:
-            k,v=[x.get_text(' ',strip=True) for x in cells]
-            if k not in fields:fields[k]=v
-    country=re.search(r'\[([A-Z]{2})\]',fields.get('Country',''))
-    if fields.get('IP Address')!=ip or not country or not fields.get('City') or fields.get('City')=='-':raise ValueError('IP2Location website has no valid city response')
-    return {'success':True,'ip':ip,'country_code':country[1],'region':fields.get('Region',''),'city':fields['City'],'usage_type':fields.get('Usage Type',''),'isp':fields.get('ISP',''),'source':'ip2location.com/demo'}
+def parse_ipinfo(data,ip):
+    if not isinstance(data,dict) or data.get('ip')!=ip or not re.fullmatch(r'[A-Z]{2}',str(data.get('country',''))) or not data.get('city') or not data.get('region'):raise ValueError('IPinfo has no valid IP/country/city/region response')
+    return {'success':True,'ip':ip,'country_code':data['country'],'region':data['region'],'city':data['city'],'org':data.get('org',''),'source':'ipinfo.io/json','raw':data}
 
 def is_tokyo(n):
     geo=n.get('geo') or {}
@@ -43,8 +36,10 @@ def crosscheck_home(n):
     if geo.get('country_code')!=country or other.get('country_code')!=country:return False
     if privacy.get('is_hosting') is not False:return False
     if (other.get('company') or {}).get('type')!='isp' or (other.get('asn') or {}).get('type')!='isp':return False
-    usage=geo.get('usage_type','').upper()
-    if '(ISP)' not in usage or 'FIXED LINE' not in usage or '(DCH)' in usage or 'DATA CENTER' in usage:return False
+    if geo.get('success') is not True or geo.get('source')!='ipinfo.io/json':return False
+    raw=geo.get('raw') or {}
+    if raw.get('is_hosting') is True or raw.get('is_mobile') is True or raw.get('is_satellite') is True:return False
+    if (raw.get('asn') or {}).get('type') in ('hosting','business','education','government'):return False
     if country=='JP':
         if not is_tokyo(n):return False
         if not any(str(other.get(k,'')).lower() in ('tokyo','tokyo-to') for k in ('city','subdivision')):return False

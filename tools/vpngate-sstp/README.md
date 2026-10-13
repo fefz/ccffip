@@ -6,11 +6,11 @@
 
 - 每个地区最多选 3 个；不检测 US、TW。
 - 优先兼顾在线会话数少、官方公布带宽高、列表延迟低，以及两轮 SSTP 握手的延迟和成功次数。
-- JP 优先检查 IP2Location 入口定位为东京的候选；候选不足时可扩大日本候选范围，但最终发布的 JP **实际出口必须经两库判定为东京地区**。
+- JP 优先检查 IPinfo 入口定位为东京的候选；候选不足时可扩大日本候选范围，但最终发布的 JP **实际出口必须经两库判定为东京地区**。
 - JP、KR 均完成 SSTP/PPP 登录后，通过隧道查询公网出口 IP，而不是把 SSTP 服务器入口 IP 当作出口。
-- IP2Location 官方网页须将实际出口标记为 `Fixed Line ISP`，且不能是 `DCH` 或 `Data Center`。
+- IPinfo Legacy JSON API 用于实际出口国家、城市、地区核验；当前免 Key 响应没有固定线路类型，不能据此确认家宽。若 IPinfo 明确返回 hosting/mobile/satellite，则拒绝。
 - IPLocate 查询同一个实际出口，须明确满足 `privacy.is_hosting=false`、`company.type=isp`、`asn.type=isp`，两库国家必须匹配目标国家。
-- JP 还须满足 IP2Location 城市或地区为 Tokyo，以及 IPLocate 城市或 subdivision 为 Tokyo。Shinjuku + Tokyo subdivision 可通过。
+- JP 还须满足 IPinfo 城市或地区为 Tokyo，以及 IPLocate 城市或 subdivision 为 Tokyo。Shinjuku + Tokyo subdivision 可通过。
 - 数据缺失、网站查询失败、国家或必需分类冲突均不通过，不会用未验证节点补足。
 - 最多复核每个地区排名靠前的 12 个可达候选，取最先通过完整检查的 3 个；这不是全网最优或实测带宽前三名。
 
@@ -31,9 +31,9 @@
 ## 文件说明
 
 - `run.py`：官方列表抓取、候选检测、筛选、GitHub 发布及回读。
-- `refresh.py`：列表/网页解析、评分、家宽交叉验证和输出格式校验。
+- `refresh.py`：列表/JSON解析、评分、家宽交叉验证和输出格式校验。
 - `egress.py`：隔离网络命名空间内的 SSTP/PPP 登录及真实出口检测。
-- `test_refresh.py`：输出配对、国家范围、东京优先、网页解析及家宽校验测试。
+- `test_refresh.py`：输出配对、国家范围、东京优先、JSON解析及家宽校验测试。
 - `requirements.txt`：Python 依赖。
 - `vpngate-sstp-refresh.service` / `.timer`：生产定时任务示例。
 
@@ -94,7 +94,8 @@ sudo systemctl list-timers vpngate-sstp-refresh.timer
 - 使用保留给脚本的命名空间 `sstp-egress-publisher`、veth `sstpubh/sstpubn`、子网 `10.254.98.0/30`；不要与其他服务复用。
 - VPN Gate 自签名证书通过 `--cert-warn` 接受；这不等于证书可信验证。不要用这些公开 VPN 传输敏感信息。
 - 官网公布的 Mbps 不等于本组合链路实测带宽。当前不做下载吞吐测量，也未验证“前置入口 + SSTP”组合链路的最终客户端效果；完整出口测试是直接连接 SSTP。
-- “家宽”是两个数据库共同支持的固定线路 ISP / 非 hosting 分类，**不是物理住宅证明**。公共 VPN 标记可能仍为 true，脚本不会把 `is_vpn` 等同于机房。
+- “家宽”标签沿用输出格式，实际证据是 IPinfo 地理定位 + IPLocate ISP / 非 hosting 分类，固定线路状态尚未验证，**不是物理住宅证明**。公共 VPN 标记可能仍为 true，脚本不会把 `is_vpn` 等同于机房。
 - IP 定位有误差；东京是统一数据库判定口径，不能保证其他查询网站完全一致。
-- IP2Location 使用官方 demo 网页，IPLocate 使用无 Key 查询入口；当前可用不代表永久免费或无限配额。限流、服务变更或网页结构变化会导致候选被拒绝，不绕过验证码或访问限制。
+- IPinfo 使用 `https://ipinfo.io/<IP>/json` Legacy 公共接口，IPLocate 使用无 Key 查询入口；当前可用不代表永久免费或无限配额。限流、服务变更或网页结构变化会导致候选被拒绝，不绕过验证码或访问限制。
+- IPinfo 官方文档说明无账户 Legacy 接口通常限 1,000 次/天（同一出口共享）；入口成功查询缓存 24 小时，出口每轮重查。IPinfo Lite 只有国家和 ASN，没有城市，不可直接替代本任务。参考：https://support.ipinfo.io/hc/en-us/articles/34121895556242-Legacy-Free-API-vs-IPinfo-Lite
 - 不提交 `source.html`、GeoIP 缓存、`latest-report.json`、运行日志、锁文件、生成结果副本或 GitHub 凭据。

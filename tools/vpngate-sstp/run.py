@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor,as_completed
 from datetime import datetime,timezone
 import requests
 from bs4 import BeautifulSoup
-from refresh import COUNTRIES,parse_rows,quality,parse_hk,build_output,validate_output,is_tokyo,rank_nodes,parse_ip2location,crosscheck_home
+from refresh import COUNTRIES,parse_rows,quality,parse_hk,build_output,validate_output,is_tokyo,rank_nodes,parse_ipinfo,crosscheck_home
 from egress import verify_egress
 ROOT=Path(__file__).resolve().parent
 REPO='fefz/ccffip';BRANCH='main';TARGET='data/sstp.txt'
@@ -52,15 +52,15 @@ def locate_japan(nodes):
             if not ipaddress.ip_address(ip).is_global:raise ValueError('non-public IP')
             n['ip']=ip
             prior=cache.get(ip,{})
-            if prior.get('success') and prior.get('source')=='ip2location.com/demo' and time.time()-prior.get('checked_at',0)<86400:
+            if prior.get('success') and prior.get('source')=='ipinfo.io/json' and time.time()-prior.get('checked_at',0)<86400:
                 n['geo']=prior;return n
             # Pace the free GeoIP service; cache successful answers per IP.
             with lock:
                 delay=2.0-(time.monotonic()-last_request[0])
                 if delay>0:time.sleep(delay)
                 last_request[0]=time.monotonic()
-            r=requests.get('https://www.ip2location.com/demo/'+ip,timeout=20);r.raise_for_status()
-            n['geo']=parse_ip2location(r.text,ip)
+            r=requests.get('https://ipinfo.io/'+ip+'/json',timeout=20);r.raise_for_status()
+            n['geo']=parse_ipinfo(r.json(),ip)
             n['geo'].update(checked_at=time.time())
             with lock:cache[ip]=n['geo']
         except Exception as exc:n['geo']={'success':False,'error':type(exc).__name__}
@@ -137,7 +137,7 @@ def main():
         # Metadata bandwidth is advertised, not measured SSTP goodput.
         ranked=rank_nodes(ok)
         selected[country]=ranked[:3]
-    # Both countries must pass actual egress + fixed-line ISP/non-hosting crosscheck.
+    # Both countries must pass actual egress + ISP/non-hosting crosscheck.
     egress_checks=[];selected={c:[] for c in COUNTRIES}
     for country in COUNTRIES:
         for n in rank_nodes([x for x in results if x['country']==country])[:12]:
@@ -145,8 +145,8 @@ def main():
             if egress.get('egress_ip'):
                 try:
                     ip=egress['egress_ip']
-                    r=requests.get('https://www.ip2location.com/demo/'+ip,timeout=20);r.raise_for_status()
-                    item['entry_geo']=item.get('geo');item['geo']=parse_ip2location(r.text,ip)
+                    r=requests.get('https://ipinfo.io/'+ip+'/json',timeout=20);r.raise_for_status()
+                    item['entry_geo']=item.get('geo');item['geo']=parse_ipinfo(r.json(),ip)
                     r=requests.get('https://www.iplocate.io/api/lookup/'+ip,timeout=20);r.raise_for_status();item['iplocate']=r.json()
                     if crosscheck_home(item):selected[country].append(item)
                 except Exception as exc:item['egress_geo_error']=type(exc).__name__
@@ -161,7 +161,7 @@ def main():
     report['front_source']=FRONT_SOURCE
     report['front_source_sha']=hk_doc['sha']
     report['front_endpoints']=hk
-    report['verification']='JP and KR: authenticated SSTP/PPP actual egress + IP2Location fixed-line ISP + IPLocate non-hosting ISP; JP must be Tokyo in both databases. Database-supported classification, not proof of physical residence. No measured tunnel bandwidth.'
+    report['verification']='JP and KR: authenticated SSTP/PPP actual egress + IPinfo geolocation + IPLocate non-hosting ISP; fixed-line status unverified; JP must be Tokyo in both databases. Database-supported classification, not proof of physical residence. No measured tunnel bandwidth.'
     (ROOT/'latest-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
     candidate=ROOT/'sstp.txt';candidate.write_text(output)
     current=api(f'repos/{REPO}/contents/{TARGET}?ref={BRANCH}')

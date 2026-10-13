@@ -55,24 +55,24 @@ class RegionTest(unittest.TestCase):
         self.assertFalse(m.is_tokyo(dict(base,geo={'success':True,'country_code':'US','city':'Tokyo','region':'Tokyo'})))
 
 class WebsiteTest(unittest.TestCase):
-    def test_parse_ip2location_geo_not_timezone(self):
+    def test_parse_ipinfo_geo_not_timezone(self):
         import refresh as m
-        self.assertTrue(callable(getattr(m,'parse_ip2location',None)), 'website parser missing')
-        h='<table><tr><td>IP Address</td><td>1.2.3.4</td></tr><tr><td>Country</td><td>Japan [JP]</td></tr><tr><td>Region</td><td>Toyama</td></tr><tr><td>City</td><td>Toyama</td></tr><tr><td>Olson Time Zone</td><td>Asia/Tokyo</td></tr></table>'
-        d=m.parse_ip2location(h,'1.2.3.4');self.assertEqual(d['city'],'Toyama');self.assertFalse(m.is_tokyo({'country':'JP','geo':d}))
-        with self.assertRaises(ValueError):m.parse_ip2location('<html>Forbidden</html>','1.2.3.4')
+        d=m.parse_ipinfo({'ip':'1.2.3.4','country':'JP','region':'Toyama','city':'Toyama','timezone':'Asia/Tokyo'},'1.2.3.4')
+        self.assertEqual(d['city'],'Toyama');self.assertFalse(m.is_tokyo({'country':'JP','geo':d}))
+        with self.assertRaises(ValueError):m.parse_ipinfo({'ip':'1.2.3.5','country':'JP','city':'Tokyo'},'1.2.3.4')
+        with self.assertRaises(ValueError):m.parse_ipinfo({'ip':'1.2.3.4','country':'JP'},'1.2.3.4')
 
 class ResidentialTest(unittest.TestCase):
     def test_crosscheck_rejects_hosting_unknown_and_non_tokyo(self):
         import refresh as m
         self.assertTrue(callable(getattr(m,'crosscheck_home',None)), 'residential crosscheck missing')
-        n={'country':'JP','geo':{'success':True,'ip':'1.2.3.4','country_code':'JP','region':'Tokyo','city':'Tokyo','usage_type':'(ISP) Fixed Line ISP'},'egress':{'ppp_connected':True,'egress_ip':'1.2.3.4'},'iplocate':{'ip':'1.2.3.4','country_code':'JP','city':'Shinjuku','subdivision':'Tokyo','privacy':{'is_hosting':False,'is_vpn':True},'company':{'type':'isp'},'asn':{'type':'isp'}}}
+        n={'country':'JP','geo':{'success':True,'ip':'1.2.3.4','country_code':'JP','region':'Tokyo','city':'Tokyo','source':'ipinfo.io/json'},'egress':{'ppp_connected':True,'egress_ip':'1.2.3.4'},'iplocate':{'ip':'1.2.3.4','country_code':'JP','city':'Shinjuku','subdivision':'Tokyo','privacy':{'is_hosting':False,'is_vpn':True},'company':{'type':'isp'},'asn':{'type':'isp'}}}
         self.assertTrue(m.crosscheck_home(n))
         import copy
         bad=copy.deepcopy(n);bad['iplocate']['privacy']['is_hosting']=True;self.assertFalse(m.crosscheck_home(bad))
         bad=copy.deepcopy(n);bad['iplocate']['privacy'].pop('is_hosting');self.assertFalse(m.crosscheck_home(bad))
         bad=copy.deepcopy(n);bad['iplocate']['city']='Osaka';bad['iplocate']['subdivision']='Osaka';self.assertFalse(m.crosscheck_home(bad))
-        bad=copy.deepcopy(n);bad['geo']['usage_type']='(DCH) Data Center';self.assertFalse(m.crosscheck_home(bad))
+        bad=copy.deepcopy(n);bad['geo']['source']='ip2location.com/demo';self.assertFalse(m.crosscheck_home(bad))
         bad=copy.deepcopy(n);bad['iplocate']['ip']='1.2.3.5';self.assertFalse(m.crosscheck_home(bad))
 
 class SourceTest(unittest.TestCase):
