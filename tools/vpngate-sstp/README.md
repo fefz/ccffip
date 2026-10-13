@@ -97,5 +97,5 @@ sudo systemctl list-timers vpngate-sstp-refresh.timer
 - “家宽”标签沿用输出格式，实际证据是 IPinfo 地理定位 + IPLocate ISP / 非 hosting 分类，固定线路状态尚未验证，**不是物理住宅证明**。公共 VPN 标记可能仍为 true，脚本不会把 `is_vpn` 等同于机房。
 - IP 定位有误差；东京是统一数据库判定口径，不能保证其他查询网站完全一致。
 - IPinfo 使用 `https://ipinfo.io/<IP>/json` Legacy 公共接口，IPLocate 使用无 Key 查询入口；当前可用不代表永久免费或无限配额。限流、服务变更或网页结构变化会导致候选被拒绝，不绕过验证码或访问限制。
-- IPinfo 官方文档说明无账户 Legacy 接口通常限 1,000 次/天（同一出口共享）；入口成功查询缓存 24 小时，出口每轮重查。IPinfo Lite 只有国家和 ASN，没有城市，不可直接替代本任务。参考：https://support.ipinfo.io/hc/en-us/articles/34121895556242-Legacy-Free-API-vs-IPinfo-Lite
+- 入口成功查询缓存 24 小时，出口每轮重查。当前测试的是 Legacy JSON 接口；不可直接替换为未验证返回城市/地区字段的其他套餐或接口。具体配额以提供商当时的账户政策为准。GitHub API 遇到瞬时网络故障最多重试三次。
 - 不提交 `source.html`、GeoIP 缓存、`latest-report.json`、运行日志、锁文件、生成结果副本或 GitHub 凭据。

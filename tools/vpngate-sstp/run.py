@@ -15,11 +15,15 @@ FRONT_SOURCE='data/ip.txt'
 def api(path,payload=None):
     args=['gh','api',path]
     if payload is not None:args+=['--method','PUT','--input','-']
-    r=subprocess.run(args,input=json.dumps(payload) if payload is not None else None,capture_output=True,text=True,timeout=60)
-    if r.returncode:
+    for attempt in range(3):
+        try:r=subprocess.run(args,input=json.dumps(payload) if payload is not None else None,capture_output=True,text=True,timeout=60)
+        except subprocess.TimeoutExpired:
+            if attempt==2:raise
+            time.sleep(2);continue
+        if not r.returncode:return json.loads(r.stdout)
         if 'HTTP 404' in r.stderr:return None
-        raise RuntimeError(r.stderr[:250])
-    return json.loads(r.stdout)
+        if attempt==2:raise RuntimeError(r.stderr[:250])
+        time.sleep(2)
 
 def fetch_nodes():
     errors=[]
