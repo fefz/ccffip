@@ -76,7 +76,7 @@ sudo journalctl -u vpngate-sstp-refresh.service -n 30 --no-pager
 sudo systemctl list-timers vpngate-sstp-refresh.timer
 ```
 
-定时器在**服务器时区**每四小时运行，时间为 00:00、04:00、08:00、12:00、16:00、20:00；`Persistent=true` 支持开机补跑。部署主机当前采用北京时间。单次任务默认超时 15 分钟；网络极差时可通过 systemd override 调整，不能把超时当作成功。文件锁避免重复执行。
+定时器在**服务器时区**每四小时运行，时间为 02:00、06:00、10:00、14:00、18:00、22:00；`Persistent=true` 支持开机补跑。部署主机当前采用北京时间。单次任务默认超时 15 分钟；网络极差时可通过 systemd override 调整，不能把超时当作成功。文件锁避免重复执行。
 
 ## GitHub 发布与检查
 
