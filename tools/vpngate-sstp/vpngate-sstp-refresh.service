@@ -1,0 +1,13 @@
+[Unit]
+Description=Refresh verified VPN Gate SSTP endpoints to GitHub
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/vpngate-sstp
+Environment=HOME=/root
+ExecStart=/usr/bin/python3 /opt/vpngate-sstp/run.py
+TimeoutStartSec=15min
+UMask=0077
