@@ -1,0 +1,4 @@
+https://raw.githubusercontent.com/fefz/ccffip/main/goma_sg.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/goma_sin.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/xtom-sg.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/xtom_sg.txt
