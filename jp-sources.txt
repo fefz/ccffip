@@ -5,4 +5,5 @@ https://raw.githubusercontent.com/fefz/ccffip/main/nb_jp.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/sky-jp.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/xtom_jp.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/net_jp.txt
-https://raw.githubusercontent.com/fefz/ccffip/refs/heads/main/aws_jp.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/aws_jp.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/tg_shared_nrt.txt
