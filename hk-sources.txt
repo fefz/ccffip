@@ -11,3 +11,4 @@ https://raw.githubusercontent.com/fefz/ccffip/main/dm_hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/ak-hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/jti_hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/vh_hk.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/tg_shared_hkg.txt
