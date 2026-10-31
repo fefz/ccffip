@@ -3,10 +3,7 @@ https://raw.githubusercontent.com/fefz/ccffip/main/ali_hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/ali_hkg.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/isif-hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/mis_hk.txt
-https://raw.githubusercontent.com/fefz/ccffip/main/nb2_hk.txt
-https://raw.githubusercontent.com/fefz/ccffip/main/nb_hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/net-hk.txt
-https://raw.githubusercontent.com/fefz/ccffip/main/gm-hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/dm_hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/ak-hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/jti_hk.txt
