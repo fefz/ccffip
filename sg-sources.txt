@@ -2,3 +2,4 @@ https://raw.githubusercontent.com/fefz/ccffip/main/xtom-sg.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/xtom_sg.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/datawv_sg.txt
 
+https://raw.githubusercontent.com/fefz/ccffip/main/tg_shared_sin.txt
