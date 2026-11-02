@@ -1,7 +1,7 @@
-45.89.234.40:25192#Mine-JP-家宽-1$sstp://vpn:vpn@vpn711674780.opengw.net:1603
-45.89.234.40:25192#Mine-JP-家宽-2$sstp://vpn:vpn@vpn288992774.opengw.net:1876
+45.89.234.40:25192#Mine-JP-家宽-1$sstp://vpn:vpn@vpn771984099.opengw.net:1770
+45.89.234.40:25192#Mine-JP-家宽-2$sstp://vpn:vpn@vpn711674780.opengw.net:1603
 45.89.234.40:25192#Mine-JP-家宽-3$sstp://vpn:vpn@vpn945893058.opengw.net:1242
 45.89.234.40:25192#Mine-JP-家宽-4-自建$socks5://socks:uuSnP04p66DLQL0aILUZpK-1Zt-4UMn8@167.254.242.31:20267
 43.108.80.72:443#Mine-KR-家宽-1$sstp://vpn:vpn@vpn853978724.opengw.net:995
-43.108.80.72:443#Mine-KR-家宽-2$sstp://vpn:vpn@vpn233624145.opengw.net:995
-43.108.80.72:443#Mine-KR-家宽-3$sstp://vpn:vpn@vpn427568298.opengw.net:1881
+43.108.80.72:443#Mine-KR-家宽-2$sstp://vpn:vpn@vpn858674717.opengw.net:995
+43.108.80.72:443#Mine-KR-家宽-3$sstp://vpn:vpn@vpn554537348.opengw.net:1470
