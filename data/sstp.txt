@@ -1,4 +1,4 @@
-45.89.234.40:25192#Mine-JP-家宽-1$sstp://vpn:vpn@vpn239083808.opengw.net:1612
+45.89.234.40:25192#Mine-JP-家宽-1$sstp://vpn:vpn@vpn678436306.opengw.net:1348
 45.89.234.40:25192#Mine-JP-家宽-2$sstp://vpn:vpn@vpn177768996.opengw.net:1635
 45.89.234.40:25192#Mine-JP-家宽-3$sstp://vpn:vpn@vpn293400493.opengw.net:1330
 45.89.234.40:25192#Mine-JP-家宽-4-自建$socks5://socks:uuSnP04p66DLQL0aILUZpK-1Zt-4UMn8@167.254.242.31:20267
