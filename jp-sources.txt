@@ -6,3 +6,7 @@ https://raw.githubusercontent.com/fefz/ccffip/main/xtom_jp.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/net_jp.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/aws_jp.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/tg_shared_nrt.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/ali_hk.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/sub_58807.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/xtom_gen2.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/xtom_sg.txt
