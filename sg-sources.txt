@@ -6,3 +6,8 @@ https://raw.githubusercontent.com/fefz/ccffip/main/tg_shared_sin.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/ali_hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/light_tw.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/sub_58807.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/ali_SIN.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/bytevirt_SIN.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/digitalocean_SIN.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/evoxt_SIN.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/isif_SIN.txt

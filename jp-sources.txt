@@ -10,3 +10,11 @@ https://raw.githubusercontent.com/fefz/ccffip/main/ali_hk.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/sub_58807.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/xtom_gen2.txt
 https://raw.githubusercontent.com/fefz/ccffip/main/xtom_sg.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/ali_KIX.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/bytevirt_KIX.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/bytevirt_NRT.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/evoxt_KIX.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/evoxt_NRT.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/isif_NRT.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/xtom_KIX.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/zouter_NRT.txt

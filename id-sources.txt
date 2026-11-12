@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/fefz/ccffip/main/ali_CGK.txt
+https://raw.githubusercontent.com/fefz/ccffip/main/evoxt_CGK.txt
