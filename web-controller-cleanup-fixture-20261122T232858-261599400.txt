@@ -1,0 +1,8 @@
+﻿# CONTROLLED TEST FIXTURE - NOT REAL MEASUREMENTS
+1.1.1.1:443#fixture-slow
+1.1.1.1:8443#fixture-same-host
+8.8.4.4:443#fixture-numeric-zero
+8.8.8.8:443#fixture-mixed-slow-fast
+8.8.8.8:8443#fixture-exact-five-keep
+9.9.9.9:443#fixture-failed-keep
+1.0.0.1:443#fixture-unmeasured-keep
